@@ -26,4 +26,14 @@ export async function POST(req: NextRequest) {
   } catch (error) {
     return NextResponse.json({ success: false, error: (error as Error).message }, { status: 500 })
   }
+}
+
+export async function GET() {
+  try {
+    const { db } = await connectToDatabase()
+    const users = await db.collection("users").find({}).sort({ createdAt: -1 }).toArray()
+    return NextResponse.json({ success: true, users })
+  } catch (error) {
+    return NextResponse.json({ success: false, error: (error as Error).message }, { status: 500 })
+  }
 } 

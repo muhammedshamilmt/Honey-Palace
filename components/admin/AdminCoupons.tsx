@@ -1,6 +1,6 @@
 "use client"
 
-import { useState } from "react"
+import { useState, useEffect } from "react"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
@@ -37,70 +37,6 @@ import {
 } from "lucide-react"
 import { format } from "date-fns"
 import { cn } from "@/lib/utils"
-
-// Mock coupon data
-const coupons = [
-  {
-    id: 1,
-    code: "HONEY20",
-    type: "percentage",
-    value: 20,
-    description: "20% off all honey products",
-    minOrder: 50,
-    maxDiscount: 25,
-    usageLimit: 100,
-    usageCount: 45,
-    startDate: new Date("2024-01-01"),
-    endDate: new Date("2024-03-31"),
-    status: "active",
-    createdAt: new Date("2023-12-15"),
-  },
-  {
-    id: 2,
-    code: "FREESHIP",
-    type: "free_shipping",
-    value: 0,
-    description: "Free shipping on orders over $75",
-    minOrder: 75,
-    maxDiscount: 15,
-    usageLimit: 200,
-    usageCount: 123,
-    startDate: new Date("2024-01-01"),
-    endDate: new Date("2024-12-31"),
-    status: "active",
-    createdAt: new Date("2023-12-01"),
-  },
-  {
-    id: 3,
-    code: "NEWCUSTOMER",
-    type: "fixed",
-    value: 10,
-    description: "Welcome discount for new customers",
-    minOrder: 30,
-    maxDiscount: 10,
-    usageLimit: 500,
-    usageCount: 287,
-    startDate: new Date("2024-01-01"),
-    endDate: new Date("2024-12-31"),
-    status: "active",
-    createdAt: new Date("2023-11-20"),
-  },
-  {
-    id: 4,
-    code: "SUMMER2023",
-    type: "percentage",
-    value: 15,
-    description: "Summer sale - 15% off",
-    minOrder: 40,
-    maxDiscount: 20,
-    usageLimit: 150,
-    usageCount: 150,
-    startDate: new Date("2023-06-01"),
-    endDate: new Date("2023-08-31"),
-    status: "expired",
-    createdAt: new Date("2023-05-15"),
-  },
-]
 
 const getStatusColor = (status: string) => {
   switch (status) {
@@ -156,6 +92,91 @@ export default function AdminCouponsPage() {
     usageLimit: "",
     status: "active",
   })
+  const [coupons, setCoupons] = useState<any[]>([])
+  const [loading, setLoading] = useState(true)
+  const [error, setError] = useState<string | null>(null)
+  const [editDialogOpen, setEditDialogOpen] = useState(false)
+  const [editCoupon, setEditCoupon] = useState<any>(null)
+  const [editStartDate, setEditStartDate] = useState<Date | undefined>(undefined)
+  const [editEndDate, setEditEndDate] = useState<Date | undefined>(undefined)
+
+  useEffect(() => {
+    const fetchCoupons = async () => {
+      setLoading(true)
+      setError(null)
+      try {
+        const res = await fetch("/api/coupons")
+        const data = await res.json()
+        if (data.success) {
+          setCoupons(data.coupons)
+        } else {
+          setError(data.error || "Failed to fetch coupons")
+        }
+      } catch (err: any) {
+        setError(err.message || "Failed to fetch coupons")
+      } finally {
+        setLoading(false)
+      }
+    }
+    fetchCoupons()
+  }, [])
+
+  const handleCreateCoupon = async () => {
+    try {
+      setLoading(true)
+      setError(null)
+      const couponData = {
+        ...newCoupon,
+        value: newCoupon.value ? Number(newCoupon.value) : 0,
+        minOrder: newCoupon.minOrder ? Number(newCoupon.minOrder) : 0,
+        maxDiscount: newCoupon.maxDiscount ? Number(newCoupon.maxDiscount) : 0,
+        usageLimit: newCoupon.usageLimit ? Number(newCoupon.usageLimit) : 0,
+        startDate: startDate ? startDate.toISOString() : null,
+        endDate: endDate ? endDate.toISOString() : null,
+        usageCount: 0,
+      }
+      const res = await fetch("/api/coupons", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(couponData),
+      })
+      const data = await res.json()
+      if (data.success) {
+        setIsCreateDialogOpen(false)
+        setNewCoupon({
+          code: "",
+          type: "percentage",
+          value: "",
+          description: "",
+          minOrder: "",
+          maxDiscount: "",
+          usageLimit: "",
+          status: "active",
+        })
+        setStartDate(undefined)
+        setEndDate(undefined)
+        // Refetch coupons
+        const res2 = await fetch("/api/coupons")
+        const data2 = await res2.json()
+        if (data2.success) setCoupons(data2.coupons)
+      } else {
+        setError(data.error || "Failed to create coupon")
+      }
+    } catch (err: any) {
+      setError(err.message || "Failed to create coupon")
+    } finally {
+      setLoading(false)
+    }
+  }
+
+  const generateCouponCode = () => {
+    const chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789"
+    let result = ""
+    for (let i = 0; i < 8; i++) {
+      result += chars.charAt(Math.floor(Math.random() * chars.length))
+    }
+    setNewCoupon({ ...newCoupon, code: result })
+  }
 
   const filteredCoupons = coupons.filter(
     (coupon) =>
@@ -166,38 +187,82 @@ export default function AdminCouponsPage() {
   const stats = {
     total: coupons.length,
     active: coupons.filter((c) => c.status === "active").length,
-    totalUsage: coupons.reduce((sum, coupon) => sum + coupon.usageCount, 0),
-    avgUsage: Math.round(
-      coupons.reduce((sum, coupon) => sum + (coupon.usageCount / coupon.usageLimit) * 100, 0) / coupons.length,
-    ),
+    totalUsage: coupons.reduce((sum, coupon) => sum + (coupon.usageCount || 0), 0),
+    avgUsage:
+      coupons.length > 0
+        ? Math.round(
+            coupons.reduce((sum, coupon) => sum + ((coupon.usageCount || 0) / (coupon.usageLimit || 1)) * 100, 0) /
+              coupons.length,
+          )
+        : 0,
   }
 
-  const handleCreateCoupon = () => {
-    // Handle coupon creation logic here
-    console.log("Creating coupon:", newCoupon, { startDate, endDate })
-    setIsCreateDialogOpen(false)
-    // Reset form
-    setNewCoupon({
-      code: "",
-      type: "percentage",
-      value: "",
-      description: "",
-      minOrder: "",
-      maxDiscount: "",
-      usageLimit: "",
-      status: "active",
-    })
-    setStartDate(undefined)
-    setEndDate(undefined)
-  }
-
-  const generateCouponCode = () => {
-    const chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789"
-    let result = ""
-    for (let i = 0; i < 8; i++) {
-      result += chars.charAt(Math.floor(Math.random() * chars.length))
+  const handleDeleteCoupon = async (id: string) => {
+    if (!window.confirm("Are you sure you want to delete this coupon?")) return;
+    setLoading(true)
+    setError(null)
+    try {
+      const res = await fetch("/api/coupons", {
+        method: "DELETE",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ id }),
+      })
+      const data = await res.json()
+      if (data.success) {
+        setCoupons((prev) => prev.filter((c) => (c._id || c.id) !== id))
+      } else {
+        setError(data.error || "Failed to delete coupon")
+      }
+    } catch (err: any) {
+      setError(err.message || "Failed to delete coupon")
+    } finally {
+      setLoading(false)
     }
-    setNewCoupon({ ...newCoupon, code: result })
+  }
+
+  const openEditDialog = (coupon: any) => {
+    setEditCoupon({ ...coupon })
+    setEditStartDate(coupon.startDate ? new Date(coupon.startDate) : undefined)
+    setEditEndDate(coupon.endDate ? new Date(coupon.endDate) : undefined)
+    setEditDialogOpen(true)
+  }
+
+  const handleEditCoupon = async () => {
+    if (!editCoupon) return
+    setLoading(true)
+    setError(null)
+    try {
+      const patchData = {
+        id: editCoupon._id || editCoupon.id,
+        ...editCoupon,
+        value: editCoupon.value ? Number(editCoupon.value) : 0,
+        minOrder: editCoupon.minOrder ? Number(editCoupon.minOrder) : 0,
+        maxDiscount: editCoupon.maxDiscount ? Number(editCoupon.maxDiscount) : 0,
+        usageLimit: editCoupon.usageLimit ? Number(editCoupon.usageLimit) : 0,
+        startDate: editStartDate ? editStartDate.toISOString() : null,
+        endDate: editEndDate ? editEndDate.toISOString() : null,
+      }
+      const res = await fetch("/api/coupons", {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(patchData),
+      })
+      const data = await res.json()
+      if (data.success) {
+        setEditDialogOpen(false)
+        setEditCoupon(null)
+        // Refetch coupons
+        const res2 = await fetch("/api/coupons")
+        const data2 = await res2.json()
+        if (data2.success) setCoupons(data2.coupons)
+      } else {
+        setError(data.error || "Failed to update coupon")
+      }
+    } catch (err: any) {
+      setError(err.message || "Failed to update coupon")
+    } finally {
+      setLoading(false)
+    }
   }
 
   return (
@@ -455,7 +520,7 @@ export default function AdminCouponsPage() {
               </TableHeader>
               <TableBody>
                 {filteredCoupons.map((coupon) => (
-                  <TableRow key={coupon.id}>
+                  <TableRow key={coupon._id || coupon.id || coupon.code}>
                     <TableCell>
                       <div>
                         <div className="font-medium">{coupon.code}</div>
@@ -494,10 +559,10 @@ export default function AdminCouponsPage() {
                         <Button variant="ghost" size="sm">
                           <Copy className="h-4 w-4" />
                         </Button>
-                        <Button variant="ghost" size="sm">
+                        <Button variant="ghost" size="sm" onClick={() => openEditDialog(coupon)}>
                           <Edit className="h-4 w-4" />
                         </Button>
-                        <Button variant="ghost" size="sm">
+                        <Button variant="ghost" size="sm" onClick={() => handleDeleteCoupon(coupon._id || coupon.id)}>
                           <Trash2 className="h-4 w-4" />
                         </Button>
                       </div>
@@ -509,6 +574,153 @@ export default function AdminCouponsPage() {
           </div>
         </CardContent>
       </Card>
+
+      {/* Edit Coupon Dialog */}
+      <Dialog open={editDialogOpen} onOpenChange={setEditDialogOpen}>
+        <DialogContent className="max-w-2xl">
+          <DialogHeader>
+            <DialogTitle>Edit Coupon</DialogTitle>
+            <DialogDescription>Update coupon details</DialogDescription>
+          </DialogHeader>
+          {editCoupon && (
+            <div className="space-y-6">
+              <div className="grid grid-cols-2 gap-4">
+                <div className="space-y-2">
+                  <Label htmlFor="edit-code">Coupon Code</Label>
+                  <Input
+                    id="edit-code"
+                    value={editCoupon.code}
+                    onChange={(e) => setEditCoupon({ ...editCoupon, code: e.target.value })}
+                  />
+                </div>
+                <div className="space-y-2">
+                  <Label htmlFor="edit-type">Discount Type</Label>
+                  <Select value={editCoupon.type} onValueChange={(value) => setEditCoupon({ ...editCoupon, type: value })}>
+                    <SelectTrigger>
+                      <SelectValue />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="percentage">Percentage</SelectItem>
+                      <SelectItem value="fixed">Fixed Amount</SelectItem>
+                      <SelectItem value="free_shipping">Free Shipping</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
+              </div>
+              <div className="space-y-2">
+                <Label htmlFor="edit-description">Description</Label>
+                <Textarea
+                  id="edit-description"
+                  value={editCoupon.description}
+                  onChange={(e) => setEditCoupon({ ...editCoupon, description: e.target.value })}
+                />
+              </div>
+              <div className="grid grid-cols-3 gap-4">
+                <div className="space-y-2">
+                  <Label htmlFor="edit-value">Value</Label>
+                  <Input
+                    id="edit-value"
+                    type="number"
+                    value={editCoupon.value}
+                    onChange={(e) => setEditCoupon({ ...editCoupon, value: Number(e.target.value) })}
+                    disabled={editCoupon.type === "free_shipping"}
+                  />
+                </div>
+                <div className="space-y-2">
+                  <Label htmlFor="edit-minOrder">Minimum Order ($)</Label>
+                  <Input
+                    id="edit-minOrder"
+                    type="number"
+                    value={editCoupon.minOrder}
+                    onChange={(e) => setEditCoupon({ ...editCoupon, minOrder: Number(e.target.value) })}
+                  />
+                </div>
+                <div className="space-y-2">
+                  <Label htmlFor="edit-maxDiscount">Max Discount ($)</Label>
+                  <Input
+                    id="edit-maxDiscount"
+                    type="number"
+                    value={editCoupon.maxDiscount}
+                    onChange={(e) => setEditCoupon({ ...editCoupon, maxDiscount: Number(e.target.value) })}
+                  />
+                </div>
+              </div>
+              <div className="grid grid-cols-2 gap-4">
+                <div className="space-y-2">
+                  <Label htmlFor="edit-usageLimit">Usage Limit</Label>
+                  <Input
+                    id="edit-usageLimit"
+                    type="number"
+                    value={editCoupon.usageLimit}
+                    onChange={(e) => setEditCoupon({ ...editCoupon, usageLimit: Number(e.target.value) })}
+                  />
+                </div>
+                <div className="space-y-2">
+                  <Label htmlFor="edit-status">Status</Label>
+                  <div className="flex items-center space-x-2">
+                    <Switch
+                      id="edit-status"
+                      checked={editCoupon.status === "active"}
+                      onCheckedChange={(checked) =>
+                        setEditCoupon({ ...editCoupon, status: checked ? "active" : "disabled" })
+                      }
+                    />
+                    <Label htmlFor="edit-status">{editCoupon.status === "active" ? "Active" : "Disabled"}</Label>
+                  </div>
+                </div>
+              </div>
+              <div className="grid grid-cols-2 gap-4">
+                <div className="space-y-2">
+                  <Label>Start Date</Label>
+                  <Popover>
+                    <PopoverTrigger asChild>
+                      <Button
+                        variant="outline"
+                        className={cn(
+                          "w-full justify-start text-left font-normal",
+                          !editStartDate && "text-muted-foreground",
+                        )}
+                      >
+                        <CalendarIcon className="mr-2 h-4 w-4" />
+                        {editStartDate ? format(editStartDate, "PPP") : "Pick a date"}
+                      </Button>
+                    </PopoverTrigger>
+                    <PopoverContent className="w-auto p-0">
+                      <Calendar mode="single" selected={editStartDate} onSelect={setEditStartDate} initialFocus />
+                    </PopoverContent>
+                  </Popover>
+                </div>
+                <div className="space-y-2">
+                  <Label>End Date</Label>
+                  <Popover>
+                    <PopoverTrigger asChild>
+                      <Button
+                        variant="outline"
+                        className={cn(
+                          "w-full justify-start text-left font-normal",
+                          !editEndDate && "text-muted-foreground",
+                        )}
+                      >
+                        <CalendarIcon className="mr-2 h-4 w-4" />
+                        {editEndDate ? format(editEndDate, "PPP") : "Pick a date"}
+                      </Button>
+                    </PopoverTrigger>
+                    <PopoverContent className="w-auto p-0">
+                      <Calendar mode="single" selected={editEndDate} onSelect={setEditEndDate} initialFocus />
+                    </PopoverContent>
+                  </Popover>
+                </div>
+              </div>
+              <div className="flex justify-end space-x-2">
+                <Button variant="outline" onClick={() => setEditDialogOpen(false)}>
+                  Cancel
+                </Button>
+                <Button onClick={handleEditCoupon}>Save Changes</Button>
+              </div>
+            </div>
+          )}
+        </DialogContent>
+      </Dialog>
     </div>
   )
 }
