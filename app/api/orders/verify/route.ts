@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from "next/server"
-import { getDb } from "@/lib/mongodb"
+import { connectToDatabase } from "@/lib/mongodb"
 import { ObjectId } from "mongodb"
 import crypto from "crypto"
 
@@ -16,7 +16,7 @@ export async function POST(req: NextRequest) {
       .update(razorpay_order_id + "|" + razorpay_payment_id)
       .digest("hex")
 
-    const db = await getDb()
+    const { db } = await connectToDatabase()
     if (generated_signature === razorpay_signature) {
       // Payment is successful
       await db.collection("orders").updateOne(

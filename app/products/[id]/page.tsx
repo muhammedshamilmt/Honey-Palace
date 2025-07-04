@@ -10,6 +10,8 @@ import Image from "next/image"
 import { useRouter, useParams } from "next/navigation"
 import { addToCart } from "@/hooks/use-cart"
 import { toast } from "@/hooks/use-toast"
+import { Header } from "@/components/header"
+import { Footer } from "@/components/footer"
 
 export default function ProductDetailPage() {
   const router = useRouter()
@@ -86,6 +88,7 @@ export default function ProductDetailPage() {
 
   return (
     <div className="min-h-screen bg-gray-50 dark:bg-gray-900">
+      <Header />
       <div className="container mx-auto px-4 py-8">
         <div className="grid lg:grid-cols-2 gap-12">
           {/* Product Images */}
@@ -361,6 +364,7 @@ export default function ProductDetailPage() {
           </Tabs>
         </div>
       </div>
+      <Footer />
     </div>
   )
 }
