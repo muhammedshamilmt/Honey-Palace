@@ -1,10 +1,10 @@
 import { NextRequest, NextResponse } from "next/server"
-import { getDb } from "@/lib/mongodb"
+import { connectToDatabase } from "@/lib/mongodb"
 
 export async function POST(req: NextRequest) {
   try {
     const data = await req.json()
-    const db = await getDb()
+    const { db } = await connectToDatabase()
     const productData: any = {
       ...data,
       createdAt: new Date(),
@@ -38,7 +38,7 @@ export async function POST(req: NextRequest) {
 
 export async function GET() {
   try {
-    const db = await getDb()
+    const { db } = await connectToDatabase()
     const products = await db.collection("products").find({}).sort({ createdAt: -1 }).toArray()
     return NextResponse.json({ success: true, products })
   } catch (error) {

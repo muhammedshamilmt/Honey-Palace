@@ -1,11 +1,11 @@
 import { NextRequest, NextResponse } from "next/server"
-import { getDb } from "@/lib/mongodb"
+import { connectToDatabase } from "@/lib/mongodb"
 import bcrypt from "bcryptjs"
 
 export async function POST(req: NextRequest) {
   try {
     const data = await req.json()
-    const db = await getDb()
+    const { db } = await connectToDatabase()
     // Check if user already exists
     const existing = await db.collection("users").findOne({ email: data.email })
     if (existing) {

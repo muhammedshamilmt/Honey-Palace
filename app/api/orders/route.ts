@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from "next/server"
-import { getDb } from "@/lib/mongodb"
+import { connectToDatabase } from "@/lib/mongodb"
 import { ObjectId } from "mongodb"
 import Razorpay from "razorpay"
 
@@ -11,7 +11,7 @@ const razorpay = new Razorpay({
 export async function POST(req: NextRequest) {
   try {
     const data = await req.json()
-    const db = await getDb()
+    const { db } = await connectToDatabase()
     let orderData = {
       ...data,
       status: data.paymentMethod === "upi" ? "Pending Payment" : "Processing",
@@ -53,7 +53,7 @@ export async function PATCH(req: NextRequest) {
     if (!orderId || !status) {
       return NextResponse.json({ success: false, error: "Missing orderId or status" }, { status: 400 })
     }
-    const db = await getDb()
+    const { db } = await connectToDatabase()
     const result = await db.collection("orders").updateOne(
       { _id: new ObjectId(orderId) },
       { $set: { status } }
@@ -70,7 +70,7 @@ export async function PATCH(req: NextRequest) {
 
 export async function GET(req: NextRequest) {
   try {
-    const db = await getDb()
+    const { db } = await connectToDatabase()
     const url = new URL(req.url)
     const id = url.searchParams.get("id")
     if (id) {

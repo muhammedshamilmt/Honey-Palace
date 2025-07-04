@@ -1,10 +1,10 @@
 import { NextRequest, NextResponse } from "next/server"
-import { getDb } from "@/lib/mongodb"
+import { connectToDatabase } from "@/lib/mongodb"
 
 export async function POST(req: NextRequest) {
   try {
     const data = await req.json()
-    const db = await getDb()
+    const { db } = await connectToDatabase()
     // Upsert (insert or update) the settings document (single document)
     const result = await db.collection("settings").updateOne(
       {},
@@ -19,7 +19,7 @@ export async function POST(req: NextRequest) {
 
 export async function GET() {
   try {
-    const db = await getDb()
+    const { db } = await connectToDatabase()
     const settings = await db.collection("settings").findOne({})
     return NextResponse.json({ success: true, settings })
   } catch (error) {

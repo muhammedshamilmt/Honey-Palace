@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from "next/server"
-import { getDb } from "@/lib/mongodb"
+import { connectToDatabase } from "@/lib/mongodb"
 
 function padNumber(num: number, size: number) {
   let s = num + "";
@@ -10,7 +10,7 @@ function padNumber(num: number, size: number) {
 export async function POST(req: NextRequest) {
   try {
     const data = await req.json()
-    const db = await getDb()
+    const { db } = await connectToDatabase()
     // Find the latest order to determine the next order number
     const latestOrder = await db.collection("bulkOrders")
       .find({ id: { $regex: /^BO-\d{4}-\d+$/ } })
@@ -36,7 +36,7 @@ export async function POST(req: NextRequest) {
 
 export async function GET(req: NextRequest) {
   try {
-    const db = await getDb()
+    const { db } = await connectToDatabase()
     const url = new URL(req.url)
     const id = url.searchParams.get("id")
     if (id) {
