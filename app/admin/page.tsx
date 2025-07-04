@@ -42,7 +42,7 @@ import AdminCustomers from "@/components/admin/AdminCustomers"
 import AdminAnalytics from "@/components/admin/AdminAnalytics"
 import AdminSettings from "@/components/admin/AdminSettings"
 import AdminCoupons from "@/components/admin/AdminCoupons"
-import AdminBulkOrders from "@/components/admin/Adminbulkorders"
+import AdminBulkOrders from "@/components/admin/AdminBulkOrders"
 import { AdminContact } from "@/components/admin/AdminContact"
 
 interface AdminStats {
