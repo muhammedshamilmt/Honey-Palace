@@ -253,7 +253,7 @@ export default function AdminBulkOrdersPage() {
                         </TableCell>
                         <TableCell>{new Date(order.orderDate).toLocaleDateString()}</TableCell>
                         <TableCell>{new Date(order.deliveryDate).toLocaleDateString()}</TableCell>
-                        <TableCell>${order.totalAmount.toLocaleString()}</TableCell>
+                        <TableCell>${(order.totalAmount !== undefined ? order.totalAmount : Array.isArray(order.items) ? order.items.reduce((sum, item) => sum + (item.price * item.quantity), 0) : 0).toLocaleString()}</TableCell>
                         <TableCell>
                           <div className="flex items-center space-x-2">
                             <Dialog>
@@ -339,24 +339,36 @@ export default function AdminBulkOrdersPage() {
                                             </TableRow>
                                           </TableHeader>
                                           <TableBody>
-                                            {selectedOrder.items.map((item: any, index: number) => (
-                                              <TableRow key={index}>
-                                                <TableCell>
-                                                  <div>
-                                                    <div className="font-medium">{item.name}</div>
-                                                    <div className="text-sm text-muted-foreground">{item.unit}</div>
-                                                  </div>
-                                                </TableCell>
-                                                <TableCell>{item.quantity}</TableCell>
-                                                <TableCell>${item.price.toFixed(2)}</TableCell>
-                                                <TableCell>${(item.quantity * item.price).toFixed(2)}</TableCell>
+                                            {Array.isArray(selectedOrder.items) && selectedOrder.items.length > 0 ? (
+                                              selectedOrder.items.map((item: any, index: number) => (
+                                                <TableRow key={index}>
+                                                  <TableCell>
+                                                    <div>
+                                                      <div className="font-medium">{item.name}</div>
+                                                      <div className="text-sm text-muted-foreground">{item.unit}</div>
+                                                    </div>
+                                                  </TableCell>
+                                                  <TableCell>{item.quantity}</TableCell>
+                                                  <TableCell>${item.price.toFixed(2)}</TableCell>
+                                                  <TableCell>${(item.quantity * item.price).toFixed(2)}</TableCell>
+                                                </TableRow>
+                                              ))
+                                            ) : (
+                                              <TableRow>
+                                                <TableCell colSpan={4} className="text-center text-muted-foreground">No items found</TableCell>
                                               </TableRow>
-                                            ))}
+                                            )}
                                           </TableBody>
                                         </Table>
                                         <div className="mt-4 flex justify-end">
                                           <div className="text-lg font-bold">
-                                            Total: ${selectedOrder.totalAmount.toFixed(2)}
+                                            Total: ${
+                                              typeof selectedOrder.totalAmount === 'number' && !isNaN(selectedOrder.totalAmount)
+                                                ? selectedOrder.totalAmount.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })
+                                                : Array.isArray(selectedOrder.items)
+                                                  ? selectedOrder.items.reduce((sum, item) => sum + (item.price * item.quantity), 0).toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })
+                                                  : '0.00'
+                                            }
                                           </div>
                                         </div>
                                       </CardContent>
