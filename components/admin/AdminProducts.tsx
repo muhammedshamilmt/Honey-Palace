@@ -40,6 +40,8 @@ export default function AdminProducts() {
   })
   const [products, setProducts] = useState<any[]>([])
   const [loading, setLoading] = useState(true)
+  const [deletingProductId, setDeletingProductId] = useState<string | null>(null)
+  const [savingEdit, setSavingEdit] = useState(false)
 
   useEffect(() => {
     fetchProducts()
@@ -69,9 +71,46 @@ export default function AdminProducts() {
   const lowStockProducts = products.filter((p) => p.lowStock).length
   const totalRevenue = products.reduce((sum, p) => sum + p.revenue, 0)
 
-  const handleSaveProduct = () => {
-    console.log("Saving product:", editingProduct)
-    setEditingProduct(null)
+  const handleSaveProduct = async () => {
+    if (!editingProduct) return
+    setSavingEdit(true)
+    try {
+      const res = await fetch(`/api/products/${editingProduct.id}`, {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          name: editingProduct.name,
+          description: editingProduct.description,
+          price: Number(editingProduct.price),
+          stock: Number(editingProduct.stock),
+          category: editingProduct.category,
+        }),
+      })
+      const data = await res.json()
+      if (data.success) {
+        fetchProducts()
+        setEditingProduct(null)
+      }
+    } catch (err) {
+      // Optionally, show error
+    }
+    setSavingEdit(false)
+  }
+
+  const handleDeleteProduct = async (productId: string) => {
+    setDeletingProductId(productId)
+    try {
+      const res = await fetch(`/api/products/${productId}`, {
+        method: "DELETE",
+      })
+      const data = await res.json()
+      if (data.success) {
+        fetchProducts()
+      }
+    } catch (err) {
+      // Optionally, show error
+    }
+    setDeletingProductId(null)
   }
 
   const handleAddProduct = async () => {
@@ -660,7 +699,7 @@ export default function AdminProducts() {
 
                   <Dialog>
                     <DialogTrigger asChild>
-                      <Button variant="ghost" size="icon" onClick={() => setEditingProduct({ ...product })}>
+                      <Button variant="ghost" size="icon" onClick={() => setEditingProduct({ ...product, id: String(product._id || product.id) })}>
                         <Edit className="h-4 w-4" />
                       </Button>
                     </DialogTrigger>
@@ -675,7 +714,7 @@ export default function AdminProducts() {
                               <Label htmlFor="edit-name">Product Name</Label>
                               <Input
                                 id="edit-name"
-                                value={editingProduct.name}
+                                value={editingProduct.name ?? ""}
                                 onChange={(e) => setEditingProduct({ ...editingProduct, name: e.target.value })}
                               />
                             </div>
@@ -684,9 +723,9 @@ export default function AdminProducts() {
                               <Input
                                 id="edit-price"
                                 type="number"
-                                value={editingProduct.price}
+                                value={editingProduct.price !== undefined ? String(editingProduct.price) : ""}
                                 onChange={(e) =>
-                                  setEditingProduct({ ...editingProduct, price: Number.parseInt(e.target.value) })
+                                  setEditingProduct({ ...editingProduct, price: e.target.value })
                                 }
                               />
                             </div>
@@ -695,7 +734,7 @@ export default function AdminProducts() {
                             <Label htmlFor="edit-description">Description</Label>
                             <Textarea
                               id="edit-description"
-                              value={editingProduct.description}
+                              value={editingProduct.description ?? ""}
                               onChange={(e) => setEditingProduct({ ...editingProduct, description: e.target.value })}
                               rows={3}
                             />
@@ -706,9 +745,9 @@ export default function AdminProducts() {
                               <Input
                                 id="edit-stock"
                                 type="number"
-                                value={editingProduct.stock}
+                                value={editingProduct.stock !== undefined ? String(editingProduct.stock) : ""}
                                 onChange={(e) =>
-                                  setEditingProduct({ ...editingProduct, stock: Number.parseInt(e.target.value) })
+                                  setEditingProduct({ ...editingProduct, stock: e.target.value })
                                 }
                               />
                             </div>
@@ -716,7 +755,7 @@ export default function AdminProducts() {
                               <Label htmlFor="edit-category">Category</Label>
                               <Input
                                 id="edit-category"
-                                value={editingProduct.category}
+                                value={editingProduct.category ?? ""}
                                 onChange={(e) => setEditingProduct({ ...editingProduct, category: e.target.value })}
                               />
                             </div>
@@ -725,8 +764,18 @@ export default function AdminProducts() {
                             <Button variant="outline" onClick={() => setEditingProduct(null)}>
                               Cancel
                             </Button>
-                            <Button onClick={handleSaveProduct} className="bg-amber-600 hover:bg-amber-700">
-                              Save Changes
+                            <Button onClick={handleSaveProduct} className="bg-amber-600 hover:bg-amber-700" disabled={savingEdit}>
+                              {savingEdit ? (
+                                <span className="flex items-center justify-center">
+                                  <svg className="animate-spin h-4 w-4 mr-2 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                                    <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+                                    <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v8z"></path>
+                                  </svg>
+                                  Saving...
+                                </span>
+                              ) : (
+                                "Save Changes"
+                              )}
                             </Button>
                           </div>
                         </div>
@@ -734,8 +783,15 @@ export default function AdminProducts() {
                     </DialogContent>
                   </Dialog>
 
-                  <Button variant="ghost" size="icon" className="text-red-600 hover:text-red-700">
-                    <Trash2 className="h-4 w-4" />
+                  <Button variant="ghost" size="icon" className="text-red-600 hover:text-red-700" onClick={() => handleDeleteProduct(String(product._id || product.id))} disabled={deletingProductId === String(product._id || product.id)}>
+                    {deletingProductId === String(product._id || product.id) ? (
+                      <svg className="animate-spin h-4 w-4" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                        <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+                        <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v8z"></path>
+                      </svg>
+                    ) : (
+                      <Trash2 className="h-4 w-4" />
+                    )}
                   </Button>
                 </div>
               </div>

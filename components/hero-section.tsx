@@ -146,13 +146,13 @@ export function HeroSection() {
           {/* Hero Image */}
           <div className="relative">
             <div className="relative z-10">
-              <div className="relative overflow-hidden rounded-3xl shadow-2xl">
+              <div className="relative overflow-hidden h-[40rem]  rounded-3xl shadow-2xl">
                 <Image
-                  src="/placeholder.svg?height=700&width=600"
+                  src="https://i.pinimg.com/736x/5e/38/01/5e3801609851aafbbc2b1e180cdb0883.jpg"
                   alt="Premium Honey Collection"
                   width={600}
                   height={700}
-                  className="object-cover"
+                  className="object-cover w-full"
                 />
                 {/* Overlay gradient */}
                 <div className="absolute inset-0 bg-gradient-to-t from-amber-900/20 to-transparent"></div>

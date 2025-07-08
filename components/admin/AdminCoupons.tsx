@@ -142,19 +142,19 @@ export default function AdminCouponsPage() {
       })
       const data = await res.json()
       if (data.success) {
-        setIsCreateDialogOpen(false)
-        setNewCoupon({
-          code: "",
-          type: "percentage",
-          value: "",
-          description: "",
-          minOrder: "",
-          maxDiscount: "",
-          usageLimit: "",
-          status: "active",
-        })
-        setStartDate(undefined)
-        setEndDate(undefined)
+    setIsCreateDialogOpen(false)
+    setNewCoupon({
+      code: "",
+      type: "percentage",
+      value: "",
+      description: "",
+      minOrder: "",
+      maxDiscount: "",
+      usageLimit: "",
+      status: "active",
+    })
+    setStartDate(undefined)
+    setEndDate(undefined)
         // Refetch coupons
         const res2 = await fetch("/api/coupons")
         const data2 = await res2.json()

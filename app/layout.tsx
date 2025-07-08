@@ -11,7 +11,10 @@ export const metadata: Metadata = {
   description:
     "Premium quality raw honey and natural beeswax products from Wandoor, Kerala. Founded by Nafeesa TM. 100% natural, FSSAI certified, supporting women entrepreneurs.",
   keywords: "honey, raw honey, natural honey, beeswax, Kerala honey, organic honey, pure honey, women entrepreneur",
-    generator: 'v0.dev'
+  icons: {
+    icon: "/favicon.ico",
+    
+  },
 }
 
 export default function RootLayout({

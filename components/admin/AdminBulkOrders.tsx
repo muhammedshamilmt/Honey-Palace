@@ -341,17 +341,17 @@ export default function AdminBulkOrdersPage() {
                                           <TableBody>
                                             {Array.isArray(selectedOrder.items) && selectedOrder.items.length > 0 ? (
                                               selectedOrder.items.map((item: any, index: number) => (
-                                                <TableRow key={index}>
-                                                  <TableCell>
-                                                    <div>
-                                                      <div className="font-medium">{item.name}</div>
-                                                      <div className="text-sm text-muted-foreground">{item.unit}</div>
-                                                    </div>
-                                                  </TableCell>
-                                                  <TableCell>{item.quantity}</TableCell>
-                                                  <TableCell>${item.price.toFixed(2)}</TableCell>
-                                                  <TableCell>${(item.quantity * item.price).toFixed(2)}</TableCell>
-                                                </TableRow>
+                                              <TableRow key={index}>
+                                                <TableCell>
+                                                  <div>
+                                                    <div className="font-medium">{item.name}</div>
+                                                    <div className="text-sm text-muted-foreground">{item.unit}</div>
+                                                  </div>
+                                                </TableCell>
+                                                <TableCell>{item.quantity}</TableCell>
+                                                <TableCell>${item.price.toFixed(2)}</TableCell>
+                                                <TableCell>${(item.quantity * item.price).toFixed(2)}</TableCell>
+                                              </TableRow>
                                               ))
                                             ) : (
                                               <TableRow>

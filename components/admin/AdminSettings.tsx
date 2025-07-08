@@ -1,6 +1,6 @@
 "use client"
 
-import { useState } from "react"
+import { useState, useEffect } from "react"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
@@ -55,6 +55,21 @@ export default function AdminSettings() {
 
   const [saving, setSaving] = useState(false)
   const [saved, setSaved] = useState(false)
+
+  useEffect(() => {
+    const fetchSettings = async () => {
+      try {
+        const res = await fetch("/api/settings")
+        const data = await res.json()
+        if (data.success && data.settings) {
+          setSettings(prev => ({ ...prev, ...data.settings }))
+        }
+      } catch (err) {
+        // Optionally show error
+      }
+    }
+    fetchSettings()
+  }, [])
 
   const handleSave = async () => {
     setSaving(true)

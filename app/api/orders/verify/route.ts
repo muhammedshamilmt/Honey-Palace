@@ -5,7 +5,25 @@ import crypto from "crypto"
 
 export async function POST(req: NextRequest) {
   try {
-    const { razorpay_order_id, razorpay_payment_id, razorpay_signature, orderId } = await req.json()
+    const body = await req.json();
+    // OTP verification branch
+    if (body.otp && body.orderId) {
+      const { db } = await connectToDatabase();
+      const order = await db.collection("orders").findOne({ _id: new ObjectId(body.orderId) });
+      if (!order) {
+        return NextResponse.json({ success: false, error: "Order not found" }, { status: 404 });
+      }
+      if (order.otp === body.otp) {
+        await db.collection("orders").updateOne(
+          { _id: new ObjectId(body.orderId) },
+          { $set: { status: "Confirmed" } }
+        );
+        return NextResponse.json({ success: true });
+      } else {
+        return NextResponse.json({ success: false, error: "Invalid OTP" }, { status: 400 });
+      }
+    }
+    const { razorpay_order_id, razorpay_payment_id, razorpay_signature, orderId } = body
     if (!razorpay_order_id || !razorpay_payment_id || !razorpay_signature || !orderId) {
       return NextResponse.json({ success: false, error: "Missing required fields" }, { status: 400 })
     }

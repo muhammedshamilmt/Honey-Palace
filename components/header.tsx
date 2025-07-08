@@ -7,6 +7,7 @@ import { Badge } from "@/components/ui/badge"
 import { ShoppingCart, User, Menu, X, Search } from "lucide-react"
 import { Input } from "@/components/ui/input"
 import { ThemeToggle } from "@/components/theme-toggle"
+import Image from "next/image"
 
 export function Header() {
   const [isMenuOpen, setIsMenuOpen] = useState(false)
@@ -43,9 +44,7 @@ export function Header() {
         <div className="flex h-16 items-center justify-between">
           {/* Logo */}
           <Link href="/" className="flex items-center space-x-2">
-            <div className="h-10 w-10 rounded-full bg-gradient-to-r from-amber-400 to-orange-500 flex items-center justify-center">
-              <span className="text-white font-bold text-lg">🍯</span>
-            </div>
+            <Image src="/favicon.ico" alt="Honey Palace" width={32} height={32} className="rounded-full" />
             <div className="flex flex-col">
               <span className="font-bold text-lg text-foreground">Honey Palace</span>
               {/* <span className="text-xs text-muted-foreground">Nature's Sweetest Gift</span> */}

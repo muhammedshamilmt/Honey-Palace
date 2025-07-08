@@ -12,6 +12,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { MapPin, Phone, Mail, Clock, Send } from "lucide-react"
 import { Header } from "@/components/header"
 import { Footer } from "@/components/footer"
+import { FaWhatsapp } from "react-icons/fa"
 
 export default function ContactPage() {
   const [formData, setFormData] = useState({
@@ -259,6 +260,19 @@ export default function ContactPage() {
         </div>
       </div>
       <Footer />
+      {/* WhatsApp Chat Button Section */}
+      <div className="fixed bottom-8 right-8 z-50">
+        <a
+          href="https://wa.me/919946890629?text=Hi%20Honey%20Palace%2C%20I%20have%20a%20question!"
+          target="_blank"
+          rel="noopener noreferrer"
+          className="flex items-center gap-3 px-5 py-3 rounded-full shadow-lg bg-green-500 hover:bg-green-600 text-white font-semibold text-lg transition-all duration-200"
+          style={{ boxShadow: "0 4px 24px 0 rgba(37, 211, 102, 0.2)" }}
+        >
+          <FaWhatsapp className="w-7 h-7" />
+          Chat with us on WhatsApp
+        </a>
+      </div>
     </div>
   )
 }

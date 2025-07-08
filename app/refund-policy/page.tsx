@@ -1,5 +1,5 @@
 import type { Metadata } from "next"
-import { RotateCcw, Clock, CheckCircle, XCircle, AlertCircle, CreditCard } from "lucide-react"
+import { RotateCcw, Clock, CheckCircle, XCircle, AlertCircle, CreditCard, Phone, Mail, Instagram } from "lucide-react"
 import { Header } from "@/components/header"
 import { Footer } from "@/components/footer"
 
@@ -20,26 +20,25 @@ export default function RefundPolicyPage() {
               <RotateCcw className="w-8 h-8 text-amber-600" />
             </div>
             <h1 className="text-4xl font-bold text-gray-900 mb-4">Refund and Return Policy</h1>
-            <p className="text-xl text-gray-600">We want you to be completely satisfied with your honey purchase.</p>
-            <p className="text-sm text-gray-500 mt-2">Last updated: January 1, 2024</p>
+            <p className="text-xl text-gray-600">We want you to be completely satisfied with your Honey Palace purchase.</p>
+            <p className="text-sm text-gray-500 mt-2">Last updated: July 1, 2025</p>
           </div>
 
           {/* Content */}
           <div className="bg-white rounded-2xl shadow-xl p-8 md:p-12">
             <div className="prose prose-lg max-w-none">
-              {/* Overview */}
+              {/* Our Commitment */}
               <section className="mb-8">
                 <h2 className="text-2xl font-bold text-gray-900 mb-4 flex items-center">
                   <CheckCircle className="w-6 h-6 text-amber-600 mr-3" />
                   Our Commitment
                 </h2>
                 <p className="text-gray-700 leading-relaxed mb-4">
-                  At Honey Palace, we stand behind the quality of our premium honey products. If you're not completely
-                  satisfied with your purchase, we offer a comprehensive return and refund policy to ensure your peace
-                  of mind.
+                  At Honey Palace, we stand behind the quality of our premium honey products. If you're not fully satisfied with your purchase, we offer a clear return and refund policy for your peace of mind.
                 </p>
-                <div className="bg-green-50 border border-green-200 rounded-lg p-4">
-                  <p className="text-green-800 font-medium">✓ 30-day satisfaction guarantee on all products</p>
+                <div className="bg-green-50 border border-green-200 rounded-lg p-4 space-y-2">
+                  <p className="text-green-800 font-medium">✔ Satisfaction guarantee on all products</p>
+                  <p className="text-green-800 font-medium">✔ Hassle-free exchanges and refunds for eligible cases</p>
                 </div>
               </section>
 
@@ -49,37 +48,33 @@ export default function RefundPolicyPage() {
                   <Clock className="w-6 h-6 text-amber-600 mr-3" />
                   Return Timeframe
                 </h2>
-
                 <div className="grid md:grid-cols-2 gap-6 mb-6">
                   <div className="bg-amber-50 rounded-lg p-6">
                     <h3 className="text-lg font-semibold text-amber-800 mb-3">Standard Products</h3>
                     <p className="text-amber-700">
-                      <strong>30 days</strong> from the date of delivery to initiate a return or exchange.
+                      <strong>Within 1 day of delivery</strong>
                     </p>
                   </div>
                   <div className="bg-blue-50 rounded-lg p-6">
                     <h3 className="text-lg font-semibold text-blue-800 mb-3">Bulk Orders</h3>
                     <p className="text-blue-700">
-                      <strong>14 days</strong> from the date of delivery due to the perishable nature and volume.
+                      <strong>Within 3 days of delivery</strong>
                     </p>
                   </div>
                 </div>
-
                 <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-4">
                   <div className="flex items-start">
                     <AlertCircle className="w-5 h-5 text-yellow-600 mr-3 mt-0.5" />
                     <p className="text-yellow-800">
-                      <strong>Important:</strong> Returns must be initiated within the specified timeframe. Contact us
-                      immediately if you have any concerns about your order.
+                      <strong>Important:</strong> Returns must be initiated within the specified timeframe. Contact us immediately if there are any concerns about your order.
                     </p>
                   </div>
                 </div>
               </section>
 
-              {/* Eligible Returns */}
+              {/* What Can Be Returned */}
               <section className="mb-8">
                 <h2 className="text-2xl font-bold text-gray-900 mb-4">What Can Be Returned</h2>
-
                 <div className="grid md:grid-cols-2 gap-6">
                   <div>
                     <h3 className="text-xl font-semibold text-green-700 mb-3 flex items-center">
@@ -89,13 +84,11 @@ export default function RefundPolicyPage() {
                     <ul className="list-disc list-inside text-gray-700 space-y-2">
                       <li>Unopened honey jars in original packaging</li>
                       <li>Products damaged during shipping</li>
-                      <li>Items that don't match the description</li>
                       <li>Wrong items sent by mistake</li>
                       <li>Defective or contaminated products</li>
                       <li>Honey gift sets in original condition</li>
                     </ul>
                   </div>
-
                   <div>
                     <h3 className="text-xl font-semibold text-red-700 mb-3 flex items-center">
                       <XCircle className="w-5 h-5 mr-2" />
@@ -103,20 +96,18 @@ export default function RefundPolicyPage() {
                     </h3>
                     <ul className="list-disc list-inside text-gray-700 space-y-2">
                       <li>Opened or partially consumed products</li>
-                      <li>Products past the return timeframe</li>
                       <li>Items damaged by customer misuse</li>
-                      <li>Custom or personalized honey products</li>
-                      <li>Products without original packaging</li>
-                      <li>Honey that has naturally crystallized</li>
+                      <li>Products past the return window</li>
+                      <li>Custom or personalized products</li>
+                      <li>Honey that has naturally crystallized (normal in pure honey)</li>
                     </ul>
                   </div>
                 </div>
               </section>
 
-              {/* Return Process */}
+              {/* How to Return Items */}
               <section className="mb-8">
                 <h2 className="text-2xl font-bold text-gray-900 mb-4">How to Return Items</h2>
-
                 <div className="space-y-6">
                   <div className="flex items-start">
                     <div className="flex-shrink-0 w-8 h-8 bg-amber-100 rounded-full flex items-center justify-center mr-4">
@@ -124,48 +115,39 @@ export default function RefundPolicyPage() {
                     </div>
                     <div>
                       <h3 className="text-lg font-semibold text-gray-800 mb-2">Contact Us</h3>
-                      <p className="text-gray-700">
-                        Email us at <strong>returns@honeypalace.com</strong> or call <strong>+1 (555) 123-4567</strong>
-                        with your order number and reason for return.
-                      </p>
+                      <ul className="text-gray-700 space-y-1">
+                        <li className="flex items-center"><Mail className="w-5 h-5 text-amber-600 mr-2" /> <span>1honeypalace@gmail.com</span></li>
+                        <li className="flex items-center"><Phone className="w-5 h-5 text-amber-600 mr-2" /> <span>+91 9207215392</span></li>
+                        <li className="flex items-center"><Instagram className="w-5 h-5 text-amber-600 mr-2" /> <span>@honeypalace__</span></li>
+                      </ul>
+                      <p className="text-gray-700 mt-2">Provide your order number and reason for return.</p>
                     </div>
                   </div>
-
                   <div className="flex items-start">
                     <div className="flex-shrink-0 w-8 h-8 bg-amber-100 rounded-full flex items-center justify-center mr-4">
                       <span className="text-amber-600 font-bold">2</span>
                     </div>
                     <div>
                       <h3 className="text-lg font-semibold text-gray-800 mb-2">Get Return Authorization</h3>
-                      <p className="text-gray-700">
-                        We'll provide you with a Return Merchandise Authorization (RMA) number and return instructions.
-                      </p>
+                      <p className="text-gray-700">We’ll issue a Return Merchandise Authorization (RMA) number and give you detailed return instructions.</p>
                     </div>
                   </div>
-
                   <div className="flex items-start">
                     <div className="flex-shrink-0 w-8 h-8 bg-amber-100 rounded-full flex items-center justify-center mr-4">
                       <span className="text-amber-600 font-bold">3</span>
                     </div>
                     <div>
                       <h3 className="text-lg font-semibold text-gray-800 mb-2">Package and Ship</h3>
-                      <p className="text-gray-700">
-                        Securely package the items in original packaging and ship to our return center using the
-                        provided prepaid shipping label.
-                      </p>
+                      <p className="text-gray-700">Pack items securely in original packaging and ship using the provided prepaid label.</p>
                     </div>
                   </div>
-
                   <div className="flex items-start">
                     <div className="flex-shrink-0 w-8 h-8 bg-amber-100 rounded-full flex items-center justify-center mr-4">
                       <span className="text-amber-600 font-bold">4</span>
                     </div>
                     <div>
                       <h3 className="text-lg font-semibold text-gray-800 mb-2">Processing</h3>
-                      <p className="text-gray-700">
-                        Once we receive your return, we'll inspect the items and process your refund or exchange within
-                        3-5 business days.
-                      </p>
+                      <p className="text-gray-700">After receiving and inspecting your return, we’ll process your refund or exchange within 3-5 business days.</p>
                     </div>
                   </div>
                 </div>
@@ -177,32 +159,21 @@ export default function RefundPolicyPage() {
                   <CreditCard className="w-6 h-6 text-amber-600 mr-3" />
                   Refund Information
                 </h2>
-
                 <div className="space-y-4">
                   <div className="bg-blue-50 rounded-lg p-6">
-                    <h3 className="text-lg font-semibold text-blue-800 mb-3">Refund Methods</h3>
+                    <h3 className="text-lg font-semibold text-blue-800 mb-3">Refund Method</h3>
                     <ul className="list-disc list-inside text-blue-700 space-y-1">
-                      <li>Original payment method (credit card, PayPal, etc.)</li>
-                      <li>Store credit for faster processing</li>
-                      <li>Exchange for different products</li>
+                      <li>Store Credit (Immediate after return)</li>
+                      <li>Credit/Debit Card (3-5 business days)</li>
+                      <li>UPI/Bank Transfer (5-7 business days)</li>
                     </ul>
                   </div>
-
                   <div className="bg-green-50 rounded-lg p-6">
-                    <h3 className="text-lg font-semibold text-green-800 mb-3">Processing Times</h3>
+                    <h3 className="text-lg font-semibold text-green-800 mb-3">Refund Options</h3>
                     <ul className="list-disc list-inside text-green-700 space-y-1">
-                      <li>
-                        <strong>Store Credit:</strong> Immediate upon return processing
-                      </li>
-                      <li>
-                        <strong>Credit Card:</strong> 3-5 business days after processing
-                      </li>
-                      <li>
-                        <strong>PayPal:</strong> 1-2 business days after processing
-                      </li>
-                      <li>
-                        <strong>Bank Transfer:</strong> 5-7 business days after processing
-                      </li>
+                      <li>Original payment method</li>
+                      <li>Store credit for faster use</li>
+                      <li>Exchange for a different product</li>
                     </ul>
                   </div>
                 </div>
@@ -211,75 +182,51 @@ export default function RefundPolicyPage() {
               {/* Exchanges */}
               <section className="mb-8">
                 <h2 className="text-2xl font-bold text-gray-900 mb-4">Exchanges</h2>
-                <p className="text-gray-700 mb-4">
-                  We're happy to exchange products for different varieties or sizes. Exchange requests follow the same
-                  process as returns, and we'll cover shipping costs for exchanges due to our error.
-                </p>
-
+                <p className="text-gray-700 mb-4">We’re happy to exchange for:</p>
                 <div className="bg-amber-50 rounded-lg p-6">
-                  <h3 className="text-lg font-semibold text-amber-800 mb-3">Exchange Options</h3>
                   <ul className="list-disc list-inside text-amber-700 space-y-2">
                     <li>Different honey varieties (same price range)</li>
-                    <li>Different jar sizes (price difference applies)</li>
+                    <li>Other jar sizes (price difference applies)</li>
                     <li>Gift sets and bundles</li>
-                    <li>Seasonal or limited edition products (subject to availability)</li>
+                    <li>Seasonal/limited editions (subject to stock)</li>
                   </ul>
+                  <p className="text-amber-700 mt-3">✅ Free shipping for exchanges if the error is ours.</p>
                 </div>
               </section>
 
-              {/* Damaged Items */}
+              {/* Damaged or Defective Items */}
               <section className="mb-8">
                 <h2 className="text-2xl font-bold text-gray-900 mb-4">Damaged or Defective Items</h2>
-                <p className="text-gray-700 mb-4">
-                  If you receive damaged or defective products, we'll make it right immediately:
-                </p>
-                <ul className="list-disc list-inside text-gray-700 space-y-2">
-                  <li>Contact us within 48 hours of delivery</li>
-                  <li>Provide photos of the damaged items</li>
-                  <li>We'll send a replacement or full refund</li>
-                  <li>No need to return damaged items unless requested</li>
-                  <li>We cover all shipping costs for replacements</li>
+                <ul className="list-disc list-inside text-gray-700 mb-4 space-y-2">
+                  <li>📌 Contact us within 48 hours of delivery</li>
+                  <li>📷 Provide photos of damaged items</li>
+                  <li>We’ll send a replacement or full refund. No need to return damaged items unless we request it.</li>
                 </ul>
               </section>
 
               {/* International Returns */}
               <section className="mb-8">
                 <h2 className="text-2xl font-bold text-gray-900 mb-4">International Returns</h2>
-                <p className="text-gray-700 mb-4">International customers can return products, but please note:</p>
-                <ul className="list-disc list-inside text-gray-700 space-y-2">
-                  <li>Customer is responsible for return shipping costs</li>
-                  <li>Items must be declared properly for customs</li>
+                <ul className="list-disc list-inside text-gray-700 mb-4 space-y-2">
+                  <li>🌎 International customers can return products, but:</li>
+                  <li>Customer pays return shipping</li>
                   <li>Original shipping costs are non-refundable</li>
-                  <li>Processing may take longer due to customs clearance</li>
+                  <li>Allow extra time for customs clearance</li>
                 </ul>
               </section>
 
-              {/* Contact Information */}
+              {/* Customer Support */}
               <section>
-                <h2 className="text-2xl font-bold text-gray-900 mb-4">Questions About Returns?</h2>
-                <p className="text-gray-700 mb-4">
-                  Our customer service team is here to help with any return or refund questions:
-                </p>
+                <h2 className="text-2xl font-bold text-gray-900 mb-4">Customer Support</h2>
                 <div className="bg-amber-50 rounded-lg p-6">
-                  <div className="space-y-3">
-                    <div className="flex items-center">
-                      <RotateCcw className="w-5 h-5 text-amber-600 mr-3" />
-                      <span className="text-gray-700">
-                        <strong>Returns:</strong> returns@honeypalace.com
-                      </span>
-                    </div>
-                    <div className="flex items-center">
-                      <Clock className="w-5 h-5 text-amber-600 mr-3" />
-                      <span className="text-gray-700">
-                        <strong>Phone:</strong> +1 (555) 123-4567 (Mon-Fri, 9AM-6PM PST)
-                      </span>
-                    </div>
-                    <div className="flex items-center">
-                      <CheckCircle className="w-5 h-5 text-amber-600 mr-3" />
-                      <span className="text-gray-700">
-                        <strong>Live Chat:</strong> Available on our website during business hours
-                      </span>
-                    </div>
+                  <ul className="space-y-3">
+                    <li className="flex items-center"><Mail className="w-5 h-5 text-amber-600 mr-3" /> <span className="text-gray-700">1honeypalace@gmail.com</span></li>
+                    <li className="flex items-center"><Phone className="w-5 h-5 text-amber-600 mr-3" /> <span className="text-gray-700">+91 9207215392</span></li>
+                    <li className="flex items-center"><Instagram className="w-5 h-5 text-amber-600 mr-3" /> <span className="text-gray-700">@honeypalace__</span></li>
+                  </ul>
+                  <div className="text-gray-700 mt-4">
+                    <span className="block">🕙 Working Hours: Monday – Friday, 10:00 AM – 4:00 PM</span>
+                    <span className="block">🚫 Closed: Saturday & Sunday</span>
                   </div>
                 </div>
               </section>

@@ -2,11 +2,40 @@ import { NextRequest, NextResponse } from "next/server"
 import { connectToDatabase } from "@/lib/mongodb"
 import { ObjectId } from "mongodb"
 import Razorpay from "razorpay"
+import nodemailer from "nodemailer"
 
 const razorpay = new Razorpay({
   key_id: process.env.RAZORPAY_KEY_ID!,
   key_secret: process.env.RAZORPAY_KEY_SECRET!,
 })
+
+// Helper to generate a 6-digit OTP
+function generateOTP() {
+  return Math.floor(100000 + Math.random() * 900000).toString();
+}
+
+// Helper to send OTP email
+async function sendOtpEmail(to: string, otp: string) {
+  const transporter = nodemailer.createTransport({
+    service: "gmail",
+    auth: {
+      user: process.env.EMAIL_USER || "1honeypalace@gmail.com",
+      pass: process.env.EMAIL_PASS || "gfjy orji qodb hcyq",
+    },
+    tls: {
+      rejectUnauthorized: false, // Allow self-signed certs (development only)
+    },
+  });
+
+  const mailOptions = {
+    from: 'Honey Palace <1honeypalace@gmail.com>',
+    to,
+    subject: "Your Honey Palace Order OTP",
+    text: `Your OTP for order confirmation is: ${otp}`,
+  };
+
+  await transporter.sendMail(mailOptions);
+}
 
 export async function POST(req: NextRequest) {
   try {
@@ -18,29 +47,39 @@ export async function POST(req: NextRequest) {
       createdAt: new Date(),
     }
 
+    // Generate OTP and send email
+    const otp = generateOTP();
+    // Send OTP to both formData.email and data.email if both exist and are different
+    const emailsToSend = [];
+    if (data.formData?.email) emailsToSend.push(data.formData.email);
+    if (data.email && data.email !== data.formData?.email) emailsToSend.push(data.email);
+    await Promise.all(emailsToSend.map(email => sendOtpEmail(email, otp)));
+    orderData.otp = otp;
+
     // If UPI, create a Razorpay order
     if (data.paymentMethod === "upi") {
       const payment = await razorpay.orders.create({
         amount: data.total * 100, // amount in paise
         currency: "INR",
         receipt: `receipt_${Date.now()}`,
-        payment_capture: 1,
-      })
+        payment_capture: true,
+      });
       // Store razorpayOrderId in the DB
       orderData = {
         ...orderData,
         razorpayOrderId: payment.id,
-      }
-      const result = await db.collection("orders").insertOne(orderData)
+      };
+      const result = await db.collection("orders").insertOne(orderData);
       return NextResponse.json({
         success: true,
         insertedId: result.insertedId,
         razorpayOrder: payment,
         key_id: process.env.RAZORPAY_KEY_ID,
-      })
+        otp, // For testing, remove in production
+      });
     } else {
       const result = await db.collection("orders").insertOne(orderData)
-      return NextResponse.json({ success: true, insertedId: result.insertedId })
+      return NextResponse.json({ success: true, insertedId: result.insertedId, otp }) // For testing, remove in production
     }
   } catch (error) {
     return NextResponse.json({ success: false, error: (error as Error).message }, { status: 500 })

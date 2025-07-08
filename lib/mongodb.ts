@@ -39,7 +39,7 @@ export default clientPromise
 export async function connectToDatabase() {
   try {
     const client = await clientPromise
-    const db = client.db(process.env.MONGODB_DB || "honey-palace")
+    const db = client.db(process.env.MONGODB_DB || "")
     return { client, db }
   } catch (error) {
     console.error("Error connecting to database:", error)

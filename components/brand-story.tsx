@@ -9,7 +9,7 @@ export function BrandStory() {
         <div className="grid lg:grid-cols-2 gap-12 items-center">
           <div className="relative">
             <Image
-              src="/placeholder.svg?height=500&width=600"
+              src="https://img.freepik.com/free-photo/beekeeper-working-bee-farm_23-2151441182.jpg?t=st=1751976191~exp=1751979791~hmac=2d16eb5ac779da477449fa777f165a2d3c2ceee481ebba4919631cd64ac7bb29&w=1380"
               alt="Beekeeper at work"
               width={600}
               height={500}

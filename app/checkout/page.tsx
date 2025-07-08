@@ -15,6 +15,7 @@ import { useRouter, useSearchParams } from "next/navigation"
 import { CreditCard, Truck, MapPin, Phone, Mail, Shield } from "lucide-react"
 import { Header } from "@/components/header"
 import { Footer } from "@/components/footer"
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog"
 
 const defaultCartItems = [
   {
@@ -64,6 +65,11 @@ export default function CheckoutPage() {
     notes: "",
   })
   const [submitting, setSubmitting] = useState(false)
+  const [showOtpDialog, setShowOtpDialog] = useState(false)
+  const [otp, setOtp] = useState("")
+  const [otpError, setOtpError] = useState("")
+  const [pendingOrderId, setPendingOrderId] = useState<string | null>(null)
+  const [pendingOrderData, setPendingOrderData] = useState<any>(null)
 
   useEffect(() => {
     // Check if this is a buy now checkout
@@ -155,6 +161,83 @@ export default function CheckoutPage() {
     })
   }
 
+  const handleOtpSubmit = async () => {
+    if (!otp || !pendingOrderId) return
+    setSubmitting(true)
+    setOtpError("")
+    try {
+      const res = await fetch("/api/orders/verify", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ orderId: pendingOrderId, otp }),
+      })
+      const data = await res.json()
+      setSubmitting(false)
+      if (data.success) {
+        setShowOtpDialog(false)
+        setOtp("")
+        // If UPI, open Razorpay payment modal
+        if (pendingOrderData && pendingOrderData.paymentMethod === "upi" && pendingOrderData.razorpayOrder) {
+          await handleUPIPayment(pendingOrderData, pendingOrderId)
+          // After payment, clear state and redirect
+          setPendingOrderId(null)
+          setPendingOrderData(null)
+          setFormData({
+            firstName: "",
+            lastName: "",
+            email: "",
+            phone: "",
+            address: "",
+            city: "",
+            state: "",
+            pincode: "",
+            landmark: "",
+            cardNumber: "",
+            expiryDate: "",
+            cvv: "",
+            cardName: "",
+            notes: "",
+          })
+          setCartItems([])
+          if (isBuyNow) {
+            sessionStorage.removeItem("buyNowItem")
+          }
+          router.push("/order-success")
+        } else {
+          // COD or other methods
+          setPendingOrderId(null)
+          setPendingOrderData(null)
+          setFormData({
+            firstName: "",
+            lastName: "",
+            email: "",
+            phone: "",
+            address: "",
+            city: "",
+            state: "",
+            pincode: "",
+            landmark: "",
+            cardNumber: "",
+            expiryDate: "",
+            cvv: "",
+            cardName: "",
+            notes: "",
+          })
+          setCartItems([])
+          if (isBuyNow) {
+            sessionStorage.removeItem("buyNowItem")
+          }
+          router.push("/order-success")
+        }
+      } else {
+        setOtpError(data.error || "Invalid OTP")
+      }
+    } catch (err: any) {
+      setSubmitting(false)
+      setOtpError(err.message || "OTP verification failed")
+    }
+  }
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
     setSubmitting(true)
@@ -174,33 +257,12 @@ export default function CheckoutPage() {
         })
         const data = await res.json()
         if (data.success && data.razorpayOrder) {
-          const upiResult: any = await handleUPIPayment(data, data.insertedId)
+          setPendingOrderId(data.insertedId)
+          setPendingOrderData({ ...data, paymentMethod: "upi" })
+          setShowOtpDialog(true)
           setSubmitting(false)
-          if (upiResult.success) {
-            setFormData({
-              firstName: "",
-              lastName: "",
-              email: "",
-              phone: "",
-              address: "",
-              city: "",
-              state: "",
-              pincode: "",
-              landmark: "",
-              cardNumber: "",
-              expiryDate: "",
-              cvv: "",
-              cardName: "",
-              notes: "",
-            })
-            setCartItems([])
-            if (isBuyNow) {
-              sessionStorage.removeItem("buyNowItem")
-            }
-            router.push("/order-success")
-          } else {
-            alert(upiResult.error || "Payment failed or cancelled")
-          }
+          // Optionally, you can show the OTP for testing: alert(data.otp)
+          return
         } else {
           setSubmitting(false)
           alert(data.error || "Order submission failed")
@@ -221,28 +283,11 @@ export default function CheckoutPage() {
       })
       const data = await res.json()
       if (data.success) {
-        setFormData({
-          firstName: "",
-          lastName: "",
-          email: "",
-          phone: "",
-          address: "",
-          city: "",
-          state: "",
-          pincode: "",
-          landmark: "",
-          cardNumber: "",
-          expiryDate: "",
-          cvv: "",
-          cardName: "",
-          notes: "",
-        })
-        setCartItems([])
+        setPendingOrderId(data.insertedId)
+        setPendingOrderData({ ...data, paymentMethod })
+        setShowOtpDialog(true)
         setSubmitting(false)
-        if (isBuyNow) {
-          sessionStorage.removeItem("buyNowItem")
-        }
-        router.push("/order-success")
+        // Optionally, you can show the OTP for testing: alert(data.otp)
       } else {
         setSubmitting(false)
         alert(data.error || "Order submission failed")
@@ -598,6 +643,28 @@ export default function CheckoutPage() {
         </div>
       </div>
       <Footer />
+      <Dialog open={showOtpDialog} onOpenChange={setShowOtpDialog}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>Enter OTP</DialogTitle>
+          </DialogHeader>
+          <div className="space-y-4">
+            <p className="text-sm">An OTP has been sent to your email. Please enter it below to confirm your order.</p>
+            <Input
+              type="text"
+              placeholder="Enter OTP"
+              value={otp}
+              onChange={e => setOtp(e.target.value)}
+              maxLength={6}
+              disabled={submitting}
+            />
+            {otpError && <p className="text-red-600 text-sm">{otpError}</p>}
+            <Button className="w-full" onClick={handleOtpSubmit} disabled={submitting || otp.length !== 6}>
+              {submitting ? "Verifying..." : "Verify OTP"}
+            </Button>
+          </div>
+        </DialogContent>
+      </Dialog>
     </div>
   )
 }
