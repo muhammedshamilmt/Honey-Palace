@@ -14,9 +14,9 @@ export default function AboutPage() {
       <section className="bg-gradient-to-br from-amber-50 to-orange-100 dark:from-amber-950 dark:to-orange-950 py-20">
         <div className="container mx-auto px-4">
           <div className="text-center max-w-4xl mx-auto">
-            <h1 className="text-5xl font-bold text-gray-900 dark:text-white mb-6">Our Story: From Hive to Home</h1>
+            <h1 className="text-5xl font-bold text-gray-900 dark:text-white mb-6">Our Story: From Hive to Heart</h1>
             <p className="text-xl text-gray-600 dark:text-gray-300 leading-relaxed">
-              For over 25 years, Honey Palace has been dedicated to bringing you the purest, most delicious honey
+              For over 3 years, Honey Palace has been dedicated to bringing you the purest, most delicious honey
               straight from nature's heart to your table.
             </p>
           </div>
@@ -30,23 +30,26 @@ export default function AboutPage() {
             <div className="space-y-6">
               <h2 className="text-4xl font-bold text-gray-900 dark:text-white">Our Mission</h2>
               <p className="text-lg text-gray-600 dark:text-gray-300">
-                We believe that honey is more than just a sweetener – it's nature's perfect gift. Our mission is to
-                preserve the ancient art of beekeeping while supporting local communities and delivering the highest
-                quality honey to families worldwide.
+                At Honey Palace, we believe honey is more than just nature’s sweetness – 
+                it’s a symbol of care, purity, and tradition. Founded by Nafeesa TM,
+                 a woman entrepreneur from Wandoor with deep roots in farming, our mission is to revive
+                  the age-old art of beekeeping while empowering local communities.
               </p>
               <p className="text-lg text-gray-600 dark:text-gray-300">
-                Every jar of Honey Palace honey represents our commitment to purity, sustainability, and the well-being
-                of both our customers and the environment.
+                Every jar of Honey Palace honey carries our promise of 100% natural goodness
+                , sustainable practices, and respect for the environment – bringing the purest honey from our hives to your home.
               </p>
+              <div>
               <Link href="/products">
                 <Button size="lg" className="bg-amber-600 hover:bg-amber-700">
                   Explore Our Products
                 </Button>
               </Link>
+      </div>
             </div>
             <div className="relative">
               <Image
-                src="https://img.freepik.com/free-photo/beekeeper-working-bee-farm_23-2151441182.jpg?t=st=1751976191~exp=1751979791~hmac=2d16eb5ac779da477449fa777f165a2d3c2ceee481ebba4919631cd64ac7bb29&w=1380"
+                src="/placeholder.svg?height=500&width=600"
                 alt="Beekeeper working with hives"
                 width={600}
                 height={500}
@@ -107,70 +110,14 @@ export default function AboutPage() {
         </div>
       </section>
 
-      {/* Timeline Section */}
-      <section className="py-20">
-        <div className="container mx-auto px-4">
-          <div className="text-center mb-16">
-            <h2 className="text-4xl font-bold text-gray-900 dark:text-white mb-4">Our Journey</h2>
-            <p className="text-xl text-gray-600 dark:text-gray-300">A timeline of our growth and achievements</p>
-          </div>
-
-          <div className="max-w-4xl mx-auto">
-            <div className="space-y-12">
-              {[
-                {
-                  year: "1998",
-                  title: "The Beginning",
-                  description:
-                    "Founded by the Johnson family with just 5 local beekeepers and a dream to share pure honey.",
-                },
-                {
-                  year: "2005",
-                  title: "Expansion",
-                  description:
-                    "Grew to partner with 25 beekeepers across three states, introducing our first specialty honey varieties.",
-                },
-                {
-                  year: "2012",
-                  title: "Certification",
-                  description: "Achieved organic certification and launched our premium Manuka honey collection.",
-                },
-                {
-                  year: "2018",
-                  title: "Innovation",
-                  description:
-                    "Introduced sustainable packaging and launched our online platform for nationwide shipping.",
-                },
-                {
-                  year: "2024",
-                  title: "Today",
-                  description:
-                    "Proud to work with 50+ beekeepers and serve thousands of customers nationwide with premium honey.",
-                },
-              ].map((milestone, index) => (
-                <div key={index} className="flex items-start gap-8">
-                  <div className="flex-shrink-0 w-24 h-24 bg-amber-600 text-white rounded-full flex items-center justify-center font-bold text-lg">
-                    {milestone.year}
-                  </div>
-                  <div className="flex-1 pt-2">
-                    <h3 className="text-2xl font-semibold text-gray-900 dark:text-white mb-2">{milestone.title}</h3>
-                    <p className="text-lg text-gray-600 dark:text-gray-300">{milestone.description}</p>
-                  </div>
-                </div>
-              ))}
-            </div>
-          </div>
-        </div>
-      </section>
-
       {/* Stats Section */}
       <section className="py-20 bg-gradient-to-br from-amber-50 to-orange-100 dark:from-amber-950 dark:to-orange-950">
         <div className="container mx-auto px-4">
           <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-8 text-center">
             {[
               { number: "50+", label: "Partner Beekeepers" },
-              { number: "10,000+", label: "Happy Customers" },
-              { number: "25", label: "Years of Experience" },
+              { number: "100+", label: "Happy Customers" },
+              { number: "3", label: "Years of Experience" },
               { number: "100%", label: "Pure & Natural" },
             ].map((stat, index) => (
               <div key={index} className="space-y-2">
